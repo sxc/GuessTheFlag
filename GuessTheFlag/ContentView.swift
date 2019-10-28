@@ -10,14 +10,33 @@ import SwiftUI
 
 struct ContentView: View {
     
-    var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Russia", "Spain", "UK", "US"]
-    var correctAnswer = Int.random(in: 0...2)
+    @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Russia", "Spain", "UK", "US"].shuffled()
+    @State private var correctAnswer = Int.random(in: 0...2)
+    @State private var showingScore = false
+    @State private var scoreTitle = ""
+    
     
     var body: some View {
+        
+        func flagTapped(_ number: Int) {
+            if number == correctAnswer {
+                scoreTitle = "Correct"
+            } else {
+                scoreTitle = "Wrong"
+            }
+            showingScore = true
+        }
+        
+        func askQuestion() {
+            countries.shuffle()
+            correctAnswer = Int.random(in: 0...2)
+        }
+        
         ZStack {
             Color.blue.edgesIgnoringSafeArea(.all)
         VStack {
-            Text("Tap the flag of")
+//            Text("Tap the flag of")
+            self.flagTapped(number)
                 .foregroundColor(.white)
             Text(countries[correctAnswer])
                 .foregroundColor(.white)
@@ -35,6 +54,11 @@ struct ContentView: View {
      }
     }
     }
+    
+    .alert(isPresented: $showingScore) {
+    Alert(title: Text(scoreTitle), message: Text("Your score is ???"), dissmissButton: .default(Text("Continue")) {
+    self.askQuestion()
+    })
 }
 
 struct ContentView_Previews: PreviewProvider {
